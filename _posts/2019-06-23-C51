@@ -1,0 +1,92 @@
+---
+layout: post
+title: Distributional RL; C51
+feature-img: "assets/img/sample_feature_img.png"
+tags: [Reinforcement Learning]
+---
+C51 is one of favriote RL algorithm, because of its unique approach of calculating the distribution of returns rather then calculating the expectation of rewards. I firsly heard of this approach in <a href="https://www.youtube.com/watch?v=bsuvM1jO-4w">this(AI Prism: Deep RL bootcamp)</a> youtube vedio. Someone with basic knowlwdge of DQN and policy gradient algoritms should definetly watch the complete course. C51 has some modified versions too like QR-DQN and IQN, C51 can be easily visulalised compared to QR-DQN and IQN so before going into them we must know about C51 and the distributional perspertive of RL. I have implemented C51 and QR-DQN and this blog will help readers to understand Disrtributional RL. I have also written some of my observation. <br> 
+<br> 
+# Distributional RL <br> 
+The idea behind learning distribution of future returns insted of just learning the expected value is to make model capable of learnig intrensic randomness(Stochastic dynamics, Stochastic reward) of the returns. Consider a person bought a lottry and so other 1000 person. Lucky 10 person will get 1M dollar if the person wins, which is 1 in a 100 chance he will get 1M dollars otherwise he will get 0 dollars with chance 90 in 100 so, expeted amount your friend will get is 1000 dollars and traditional Value based Deep RL algorithm learn to calculate the expected reward but in reality he will never get reward of 1000 dollars i.e. we are getting false knowlwdeg of the possoble returns, Returns can be multimidal like in the lottry senario due to which varience is too high which makes the convergennce difficult.
+DQN             |  C51
+:-------------------------:|:-------------------------:
+![](assets/img/NetDQN.png)  |  ![](assets/img/NetDRL.png) 
+## Distributional Bellman Equation <br>
+Very similar to the [Bellman Equation](https://en.wikipedia.org/wiki/Bellman_equation) $$Distributional Bellman Equation$$ is expressed as
+**$$Z(s,a) = r + \gamma Z(s^\prime,a^\prime)$$**
+Where, $$Z$$ represents the distribution of future rewards, unlike Q which is a scalar. According to the [paper](https://arxiv.org/abs/1707.06887) *the $$distributional Bellman equation$$ states that the distribution of $$Z$$ is characterized by the interaction of three random variables: the reward $$R$$, the next state-action$$(X′,A′)$$, and its random return $$Z(X′,A′)$$. By analogy with the well-known case, we call this quantity the $$value distribution$$.* 
+<br>
+### Value distribution 
+![](assets/img/Aoms.png) 
+The output of C51 algorithm is Discrete Probability Distribution of returns as shown above, discrete distribution can easily take form of multimodal distribution. The vertical axis represents the probability. The horizontal bars are called atoms, they are the “canonical returns” of the distribution. Atoms are placed at regular intervals on the $$return axis$$, which ranges from minimum possoble return to maximum possible return.
+<br>
+### Distributional Bellman equation dynamics
+
+Next state distribution under policy $$\pi$$: $Z(s^\prime,a^\prime)$$ where $$s^\prime$$ and $$a^\prime$$ are next state obtained after trainsition from state $$s$$ taking action $$a$$ and $$a^\prime$$ is action taken at state $$s^\prime$$.
+
+![Next state distribution under policy $$\pi$$](assets/img/Transition.png) 
+
+Multiply each support(distribution) by the discount factor $$\gamma$$, since $$\gamma$$ is less than 1 it shrink the whole distribution towards 0.
+
+![Discounting shrinks the distribution towards 0](assets/img/Shrink.png) 
+
+Adding reward $$r$$ to each support(distribution), which cause shift in the distribution.
+![Add reward and shift](assets/img/Shift.png) 
+
+All the above operation has changed the atoms so we need to change the support of the target distribution with the original support i.e. projrction.
+
+![Projection](assets/img/Project.png) 
+
+
+
+### Experiments and Results:
+Experimental details: I have used keras. For most of my experiments, I have used LSTM with 10 hidden states and final dense layer with 2 outputs. <br>
+
+**Mark 1** Dataset of random 100,000 binary strings of length 50 is generated. Trained it over the LSTM model with batch size 64 for 100 epochs, but the model learned nothing. I ran the experiment multiple times, but the result remains the same. Here is the [link](https://github.com/adityauser/XOR-LSTM/blob/master/Parity/XOR-LSTM(FixedLenght-50).ipynb) of code.<br>
+
+**Mark 2** Dataset of random 100,000 binary strings, where the length of each sequence is randomly chosen between 1 and 50 is generated. Trained it over the LSTM model with batch size 64 for 10 epochs, and most of the time model got accuracy over 0.98 in 3 iterations (Each batch was trained for 3 epochs). Since for the same batch, LSTM can’t handle the sequence of different length so, based on sequence length batches were made(Each batch was trained 3 epochs). The thing here to notice is the number of epochs required for convergence depends upon in which order batches were fitted to the model, if the batch with least sequence length is fitted first, then it takes less number of epochs than fitting the batches randomly or batch with highest sequence length is fitted first. Go through the [code](https://github.com/adityauser/XOR-LSTM/blob/master/Parity/XOR-LSTM(Variable%20Size).ipynb) for more details.<br>
+
+**Mark 3** Dataset of random 100,000 binary strings of length 6 is generated. Trained it over the LSTM model with batch size 64 for 100 epochs, and usually model gets accuracy 1 in 35 epochs. I ran the experiment multiple times(at least 10). Here is the [link](https://github.com/adityauser/XOR-LSTM/blob/master/Parity/XOR-LSTM(FixedLenght-6)%20.ipynb) of code.<br>
+
+**Mark 4** Dataset of random 100,000 binary strings, where the length of each sequence is randomly chosen between 1 and 50. What if rather than fitting random sequence of random size, we fit sequence with constant length by using Padding. Two possible ways a) Front/Pre Padding(Sequence are padded with 0s at the start of the original sequence) and b) Rear/Post Padding(Sequence are padded with 0s at the end of the original sequence).
+* Front/Pre Pad the sequence with 0s shows results similar to training the sequence of random length, or even better. [Link](https://github.com/adityauser/XOR-LSTM/blob/master/Parity/XOR-LSTM(PrePadding).ipynb) to the code.
+* Rear/Post Pad the sequence with 0s shows results similar to training the sequence of fixed length(lenght 6), usually it get accuraccy over 0.90 in 48 epoches. [Link](https://github.com/adityauser/XOR-LSTM/blob/master/Parity/XOR-LSTM(PostPadding)%20.ipynb) to the code
+
+
+**Mark 5** Some random noise of order 1e-3 is added to each element of the sequences and then sequences are trained on the model. For Fixed length(lenght=50) sequences the result remains the same as for variable length sequences with prepadding, but for variable length sequences with postpadding model was not learning anything. [Link](https://github.com/adityauser/XOR-LSTM/blob/master/Parity/XOR-LSTM(Randomness)%20.ipynb) to the code.
+
+**Mark 6** Front/Pre Pad the sequence with 0s and then reversing it. Using both sequences for training(now the model takes two sequences) doesn't help the model, the results were worse than as for Pre padded sequence but better than as for Post padded sequence. [Link](https://github.com/adityauser/XOR-LSTM/blob/master/Parity/XOR-LSTM(Double%20Sequence).ipynb) to the code.
+
+**Mark 7** Now, the sequence has 2s as well with 0s, and 1s and output is the sum of sequence modulus 3. For both of the cases(random length string and fixed length string), the result was the same as obtained for binary strings. — Now final dense layer has 3 outputs. [Link](https://github.com/adityauser/XOR-LSTM/blob/master/Parity/XOR-LSTM(Non-Binary).ipynb) to the code.
+
+### Conclusion:
+I don't want to conclude anything I don't want to corrupt your original thoughts; it is up to you how you take the above results and use them in your deep learning model. But you look at <a href="https://www.reddit.com/r/MachineLearning/comments/81uvmp/d_had_fun_with_openais_lstm_parity_prediction/">this</a> Reddit thread.
+
+
+### TD;LR
+
+#### Result:
+
+
+Proprosed way of Training  | Total Epochs  | Avg. No. of Epochs(Accuraccy>0.90) | Accuraccy
+------------- | ------------- | ------------- | -------------
+Fixed Lenght(50)  | 200  | Not Converging  | 0.5 +-1e-3
+Random Length(Random Batch Training)   | 10 iterations  | 9(3 iterations * 3 epochs)  | 1
+Random Length(Acend. Batch Training)  | 10 iterations  | 6(2 iterations * 3 epochs)  | 1
+Random Length(Decend. Batch Training)  | 10 iterations | 27(9 iterations * 3 epochs)  | 1
+Fixed Lenght(6)  | 100  | 35  | 1
+Random Length(Front-Padded)  | 10  | 5  | 1
+Random Length(Rear-Padded)  | 100  | 48  | 0.97
+Fixed Lenght(Noise)  | 100  | Not Converging  | 0.5 +-1e-3
+Random Length(Front-Padded)(Noise)  | 10  | 5  | 0.99
+Random Length(Rear-Padded)(Noise)  | 100  | Not Converging  | 0.5
+Two Sequences(Original+Reverced)  | 100  | 25  | 0.99
+Fixed Lenght(50)(ternary sequence)  | 100  | Not Converging  | 0.5 +-1e-3
+Random Length(Front-Padded)(ternary sequence)  | 50 | 18  | 0.96
+Random Length(Rear-Padded)(ternary sequence)  | 50 | Not Converging  | 0.5 +-1e-3
+
+
+
+
+
+
