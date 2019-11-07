@@ -1,6 +1,7 @@
 # SITE CONFIGURATION
 baseurl: "/blog"
 url: "https://adityauser.github.io/"
+google_analytics: UA-151783544-1
 
 # THEME-SPECIFIC CONFIGURATION
 theme_settings:
