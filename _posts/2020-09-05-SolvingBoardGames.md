@@ -4,15 +4,6 @@ title: Playing Board Games ; ES
 feature-img: "assets/img/sample_feature_img.png"
 tags: [ES, OpenSpiel]
 ---
-
----
-layout: post
-title: Distributional RL; C51
-feature-img: "assets/img/sample_feature_img.png"
-tags: [Reinforcement Learning]
----
-
-
 This blog is about first part of my internship which I did at the Intelligent and Autonomous Systems group at CWI, Amsterdarm, under the supervision of Dr Hendrik Baier.<br>
 <br>
 ## Problem Statement:
