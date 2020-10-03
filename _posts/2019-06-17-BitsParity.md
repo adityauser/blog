@@ -4,7 +4,7 @@ title: XOR-LSTM; Bits Parity
 feature-img: "assets/img/sample_feature_img.png"
 tags: [LSTM, OpenAI]
 ---
-This is a part of OpenAI Request to Research 2.0 warmup problems. I thought it was a good idea to work on this problem in my leisure time. I came to know about this "Request to Research" thing while going through OpenAI SpinningUP RL( worth a read for someone interested in Reinforcement Learning). <br>
+This is a part of OpenAI Request to Research 2.0 warmup problems. I thought it was a good idea to work on this problem in my leisure time. I came to know about this "Request to Research" thing while going through OpenAI SpinningUP RL (worth a read for someone interested in Reinforcement Learning). <br>
 <br>
 Task:<br>
 Train an <a href="http://colah.github.io/posts/2015-08-Understanding-LSTMs/">LSTM</a> to solve the XOR problem: that is, given a sequence of bits, determine its parity. The LSTM should consume the sequence, one bit at a time, and then output the correct answer at the sequence’s end. Test the two approaches below:<br>

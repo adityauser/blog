@@ -1,6 +1,6 @@
---
+---
 layout: post
-title: Playing Board Games ; ES
+title: Playing Board Games; ES
 feature-img: "assets/img/sample_feature_img.png"
 tags: [ES, OpenSpiel]
 ---
