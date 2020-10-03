@@ -78,6 +78,9 @@ To understand this problem of overfitting more precisely we saw some tournaments
 ![PopulationPlayDiverseOpp]({{ site.baseurl }}/assets/img/L1x256_DiverseOpp.png)
 
 
+## Discussion and Conclusion
+We have shown that it is possible to train neural networks on board games using ES. We had our computation limitations that’s why we only did the training till 200 generations on Connect Four domain. In future, we will try to do multi-processing to make it faster. Unlike RL algorithms, ES speed increases linearly with the number of processes. Which means they are a lot more efficient than RL algorithms. To make the opponents more diverse we used the K-Means algorithm to make clusters of individuals in the population. The K-Means model takes novelty vectors as input. In our experiments, we used actions as novelty vectors. In future, we will try to use the weights of the neural network as novelty vectors. Note that if we use weights, then we can’t use Euclidean distance as distance metric in K-Means. We need to define our own distance metric or use some deep learning technique for the clustering.
+
 
 
 
