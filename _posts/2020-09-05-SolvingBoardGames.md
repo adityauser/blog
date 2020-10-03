@@ -37,6 +37,10 @@ Training neural network using ES is not something new. A lot of work has already
 
 All the experiments done are for Connect-Four(aka 4 in a line) game.  Connect Four is a two-player board game where players take turns dropping one coloured disc from the top into a seven-column, six-row vertically suspended grid. The pieces fall straight down, occupying the lowest available space within the column.The objective of the game is to be the first to form a horizontal, vertical, or diagonal line of four of one’s owndiscs. In our experiments, we used OpenSpiel for the simulation of Connect Four.
 
+![Game1]({{ site.baseurl }}/assets/img/Game1.png)   |   ![Game2]({{ site.baseurl }}/assets/img/Game2.png)
+
+In the left game blue player won and red won the game in right.
+
 ### Methodology
 
 We started with Gaussion ES,it the most straightforward way to do mutations. However, adding small pertubations in the genome can change the behaviour of agnet entirely. Since, we are using weights of NN as genotype this problem of drastic mutation is more sceviour. Obviously, this problem is not new and researchers had come up with some tecnhiques to resolve this issue. In our model to resolve this issue we used Safe Mutations technique. Through this technique the pipeline will make sure that the divergenve between outputs from the childs' network and parents' network is less. To do so they measure the gradient of the childs' NN output. Read the Safe Mutation paper by Uber AI to understand the details.
